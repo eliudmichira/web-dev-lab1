@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Storage</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 12px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        button {
+            background-color: black;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #333;
+        }
+
+        #visitCount {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+    <script type="text/javascript">
+        const localStorage = window.localStorage;
+
+        const initialize = () => {
+            if (localStorage) {
+                const count = localStorage.getItem("visitCount") || 0;
+                const newCount = parseInt(count) + 1;
+                localStorage.setItem("visitCount", newCount);
+            }
+            updateDOM();
+        };
+
+        const updateDOM = () => {
+            const count = localStorage.getItem("visitCount") || 0;
+            const storedPreferences = localStorage.getItem("preference");
+            const preference = storedPreferences
+                ? JSON.parse(storedPreferences)
+                : {};
+            document.getElementById("visitCount").innerHTML = `Visit count ${count}`;
+            document.body.style.background = preference.color || "white";
+            showAllStoredKeyValues();
+        };
+
+        const setColorPreference = color => {
+            const preference = { color }
+            localStorage.setItem("preference", JSON.stringify(preference));
+            updateDOM();
+        };
+
+        const removeCount = () => {
+            localStorage.removeItem("visitCount");
+            updateDOM();
+        };
+
+        const clearAll = () => {
+            localStorage.clear();
+            updateDOM();
+        };
+
+        const showAllStoredKeyValues = () => {
+            console.log(`we have ${localStorage.length} values`);
+            const table = document.getElementById("storedItems");
+            table.innerHTML = "";
+
+            const headerRow = table.insertRow(0);
+            const headerCell1 = headerRow.insertCell(0);
+            const headerCell2 = headerRow.insertCell(1);
+            const headerCell3 = headerRow.insertCell(2);
+            headerCell1.innerHTML = "<b>Passport Picture</b>";
+            headerCell2.innerHTML = "<b>Name</b>";
+            headerCell3.innerHTML = "<b>Registration Number</b>";
+
+            for (let index = 0; index < localStorage.length; index++) {
+                const key = localStorage.key(index);
+                const value = localStorage.getItem(key);
+
+                const row = table.insertRow(index + 1);
+
+                const cell1 = row.insertCell(0);
+                const cell2 = row.insertCell(1);
+                const cell3 = row.insertCell(2);
+
+                cell1.innerHTML = "<img src='Passport Picture.jpg' alt='Passport Picture' width='175' height='150'>";
+                cell2.innerHTML = "ELIUD MICHIRA SAMWEL";
+                cell3.innerHTML = "SCT222-0145/2021";
+            }
+        };
+    </script>
+</head>
+
+<body onload="initialize()">
+    <button type="button" onclick="setColorPreference('red')">Red</button>
+    <button type="button" onclick="setColorPreference('green')">Green</button>
+    <button type="button" onclick="setColorPreference('blue')">Blue</button>
+    <div id="visitCount"></div>
+    <button type="button" onclick="removeCount()">Remove count</button>
+    <button type="button" onclick="clearAll()">Clear all</button>
+
+    <table id="storedItems"></table>
+</body>
+
+</html>
